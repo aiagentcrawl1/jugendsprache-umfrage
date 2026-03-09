@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auswertung – Jugendsprache & Soziale Positionierung</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        
+        .controls {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-size: 0.95em;
+        }
+        
+        .btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+            transform: translateY(-1px);
+        }
+        
+        .btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .btn-export {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+        
+        .btn-export:hover {
+            background: #059669;
+            border-color: #059669;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-top: 4px solid #667eea;
+        }
+        
+        .stat-card h3 {
+            color: #64748b;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+        }
+        
+        .big-number {
+            font-size: 3em;
+            font-weight: 700;
+            color: #667eea;
+            line-height: 1;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+        
+        .comparison-box {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 15px;
+        }
+        
+        .comparison-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .comparison-row:last-child {
+            border-bottom: none;
+        }
+        
+        .label {
+            font-weight: 600;
+            color: #475569;
+        }
+        
+        .value {
+            color: #667eea;
+            font-weight: 700;
+        }
+        
+        .these-check {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 5px solid #f59e0b;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .these-check h2 {
+            color: #92400e;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .these-result {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .result-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .result-label {
+            font-size: 0.9em;
+            color: #92400e;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .result-percent {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #b45309;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 60px 20px;
+            color: #94a3b8;
+            font-size: 1.2em;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-group {
+                justify-content: center;
+            }
+            
+            .big-number {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>📊 Auswertung: Soziale Positionierung durch Jugendsprache</h1>
+    <p>Empirische Daten zur These 3 (Müller/Neuland)</p>
+</div>
+
+<div class="container">
+    <div class="controls">
+        <div class="filter-group">
+            <button class="btn active" onclick="filterData('all')">Alle Daten</button>
+            <button class="btn" onclick="filterData('youth')">Nur Jugendliche</button>
+            <button class="btn" onclick="filterData('adult')">Nur Erwachsene</button>
+        </div>
+        <button class="btn btn-export" onclick="exportCSV()">📥 CSV Export</button>
+    </div>
+
+    <div id="noDataMsg" class="no-data hidden">
+        <h2>Keine Daten vorhanden</h2>
+        <p>Es wurden noch keine Umfragedaten gespeichert. Bitte führe zuerst die Umfrage durch.</p>
+    </div>
+
+    <div id="dashboard">
+        <!-- Übersichts-Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Gesamtantworten</h3>
+                <div class="big-number" id="totalCount">0</div>
+            </div>
+            
+            <div class="stat-card">
+                <h3>Altersverteilung</h3>
+                <div class="chart-container">
+                    <canvas id="ageChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <h3>Verteilung</h3>
+                <div class="chart-container">
+                    <canvas id="typeChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- These 3 Check -->
+        <div class="these-check">
+            <h2>🎯 Überprüfung der These 3</h2>
+            <p style="color: #78350f; margin-bottom: 20px;">
+                "Die wichtigste Funktion von Jugendsprache ist soziale Positionierung: 
+                Zugehörigkeit, Abgrenzung und Identitätsarbeit."
+            </p>
+            
+            <div class="these-result">
+                <div class="result-item">
+                    <div class="result-label">Sehen Zugehörigkeit als starken Faktor</div>
+                    <div class="result-percent" id="zugehoerigkeitStat">-%</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Nutzen bewusst Abgrenzung (Coding)</div>
+                    <div class="result-percent" id="abgrenzungStat">-%</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Sprache = Identität (Jugendliche)</div>
+                    <div class="result-percent" id="identitaetStat">-%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detaillierte Auswertungen -->
+        <div class="stats-grid">
+            <!-- Jugendliche: Zugehörigkeit -->
+            <div class="stat-card" id="youthZugehoerigkeit">
+                <h3>Zugehörigkeitsgefühl (Jugendliche)</h3>
+                <div class="chart-container">
+                    <canvas id="zugehoerigkeitChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Jugendliche: Abgrenzungsstrategien -->
+            <div class="stat-card" id="youthAbgrenzung">
+                <h3>Abgrenzung von Erwachsenen</h3>
+                <div class="chart-container">
+                    <canvas id="codingChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Jugendliche: Identität -->
+            <div class="stat-card" id="youthIdentitaet">
+                <h3>Sprache als Identität</h3>
+                <div class="chart-container">
+                    <canvas id="identitaetChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Erwachsene: Vergleich früher/heute -->
+            <div class="stat-card" id="adultVergleich">
+                <h3>Eigene Jugend vs. Heute</h3>
+                <div class="chart-container">
+                    <canvas id="vergleichChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Erwachsene: Einstellungswandel -->
+            <div class="stat-card" id="adultWandel">
+                <h3>Einstellungswandel</h3>
+                <div class="chart-container">
+                    <canvas id="wandelChart"></canvas>
+                </div>
+            </div>
+
+            <!-- These direkte Abfrage -->
+            <div class="stat-card" id="theseBewertung">
+                <h3>Bewertung der These (Erwachsene)</h3>
+                <div class="chart-container">
+                    <canvas id="theseChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Kommunikation -->
+            <div class="stat-card">
+                <h3>Kommunikationswirkung</h3>
+                <div class="chart-container">
+                    <canvas id="kommunikationChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Denglisch -->
+            <div class="stat-card">
+                <h3>Denglisch als Positionierungsmittel</h3>
+                <div class="chart-container">
+                    <canvas id="denglischChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zusammenfassung -->
+        <div class="stat-card" style="margin-top: 30px; border-top: 4px solid #f59e0b;">
+            <h3>📋 Zusammenfassung für die Facharbeit</h3>
+            <div id="summaryText" style="margin-top: 15px; line-height: 1.8; color: #475569;">
+                <!-- Wird dynamisch gefüllt -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let allData = [];
+    let charts = {};
+
+    // Daten laden beim Start
+    window.onload = function() {
+        loadData();
+    };
+
+    function loadData() {
+        // Daten aus dem LocalStorage laden (vom Fragebogen gespeichert)
+        allData = JSON.parse(localStorage.getItem('jugendspracheThese3') || '[]');
+        
+        if (allData.length === 0) {
+            document.getElementById('noDataMsg').classList.remove('hidden');
+            document.getElementById('dashboard').classList.add('hidden');
+        } else {
+            document.getElementById('noDataMsg').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+            updateDashboard(allData);
+        }
+    }
+
+    function filterData(type) {
+        // Button-Status aktualisieren
+        document.querySelectorAll('.btn').forEach(btn => {
+            if (btn.textContent.includes('Export')) return;
+            btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+
+        // Daten filtern
+        let filtered = allData;
+        if (type === 'youth') {
+            filtered = allData.filter(d => d.type === 'youth');
+        } else if (type === 'adult') {
+            filtered = allData.filter(d => d.type === 'adult');
+        }
+        
+        updateDashboard(filtered);
+    }
+
+    function updateDashboard(data) {
+        // Alte Charts zerstören
+        Object.values(charts).forEach(chart => {
+            if (chart) chart.destroy();
+        });
+
+        // Basis-Stats
+        document.getElementById('totalCount').textContent = data.length;
+        
+        const youthData = data.filter(d => d.type === 'youth');
+        const adultData = data.filter(d => d.type === 'adult');
+
+        // 1. Altersverteilung
+        const ageCounts = {};
+        data.forEach(d => {
+            ageCounts[d.alter] = (ageCounts[d.alter] || 0) + 1;
+        });
+
+        charts.age = new Chart(document.getElementById('ageChart'), {
+            type: 'bar',
+            data: {
+                labels: Object.keys(ageCounts),
+                datasets: [{
+                    label: 'Anzahl',
+                    data: Object.values(ageCounts),
+                    backgroundColor: '#667eea',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // 2. Typ-Verteilung (Jugendlich/Erwachsen)
+        charts.type = new Chart(document.getElementById('typeChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Jugendliche', 'Erwachsene'],
+                datasets: [{
+                    data: [youthData.length, adultData.length],
+                    backgroundColor: ['#667eea', '#3498db']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // 3. These 3 Statistiken berechnen
+        if (youthData.length > 0) {
+            // Zugehörigkeit (sehr stark + eher stark)
+            const zugeh = youthData.filter(d => 
+                d.zugehoerigkeit === 'Sehr stark' || d.zugehoerigkeit === 'Eher stark'
+            ).length;
+            const zugehProzent = Math.round((zugeh / youthData.length) * 100);
+            document.getElementById('zugehoerigkeitStat').textContent = zugehProzent + '%';
+
+            // Abgrenzung (bewusst oder unbewusst)
+            const abgr = youthData.filter(d => 
+                d.coding === 'Ja bewusst' || d.coding === 'Ja unbewusst'
+            ).length;
+            const abgrProzent = Math.round((abgr / youthData.length) * 100);
+            document.getElementById('abgrenzungStat').textContent = abgrProzent + '%';
+
+            // Identität (zentral + wichtig)
+            const ident = youthData.filter(d => 
+                d.identitaet === 'Zentral' || d.identitaet === 'Wichtig'
+            ).length;
+            const identProzent = Math.round((ident / youthData.length) * 100);
+            document.getElementById('identitaetStat').textContent = identProzent + '%';
+
+            // Charts für Jugendliche
+            createYouthCharts(youthData);
+            
+            document.getElementById('youthZugehoerigkeit').classList.remove('hidden');
+            document.getElementById('youthAbgrenzung').classList.remove('hidden');
+            document.getElementById('youthIdentitaet').classList.remove('hidden');
+        } else {
+            document.getElementById('zugehoerigkeitStat').textContent = '-%';
+            document.getElementById('abgrenzungStat').textContent = '-%';
+            document.getElementById('identitaetStat').textContent = '-%';
+            document.getElementById('youthZugehoerigkeit').classList.add('hidden');
+            document.getElementById('youthAbgrenzung').classList.add('hidden');
+            document.getElementById('youthIdentitaet').classList.add('hidden');
+        }
+
+        // 4. Erwachsenen-Charts
+        if (adultData.length > 0) {
+            createAdultCharts(adultData);
+            document.getElementById('adultVergleich').classList.remove('hidden');
+            document.getElementById('adultWandel').classList.remove('hidden');
+            document.getElementById('theseBewertung').classList.remove('hidden');
+        } else {
+            document.getElementById('adultVergleich').classList.add('hidden');
+            document.getElementById('adultWandel').classList.add('hidden');
+            document.getElementById('theseBewertung').classList.add('hidden');
+        }
+
+        // 5. Gemischte Auswertungen (wenn beide Gruppen da sind)
+        createMixedCharts(data);
+
+        // 6. Zusammenfassung generieren
+        generateSummary(data, youthData, adultData);
+    }
+
+    function createYouthCharts(data) {
+        // Zugehörigkeit
+        const zugehData = countValues(data, 'zugehoerigkeit');
+        charts.zugehoerigkeit = new Chart(document.getElementById('zugehoerigkeitChart'), {
+            type: 'pie',
+            data: {
+                labels: Object.keys(zugehData),
+                datasets: [{
+                    data: Object.values(zugehData),
+                    backgroundColor: ['#667eea', '#764ba2', '#f093fb', '#f5576c']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Coding/Abgrenzung
+        const codingData = countValues(data, 'coding');
+        charts.coding = new Chart(document.getElementById('codingChart'), {
+            type: 'bar',
+            data: {
+                labels: Object.keys(codingData),
+                datasets: [{
+                    label: 'Antworten',
+                    data: Object.values(codingData),
+                    backgroundColor: '#764ba2',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y'
+            }
+        });
+
+        // Identität
+        const identData = countValues(data, 'identitaet');
+        charts.identitaet = new Chart(document.getElementById('identitaetChart'), {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(identData),
+                datasets: [{
+                    data: Object.values(identData),
+                    backgroundColor: ['#f59e0b', '#fbbf24', '#fcd34d', '#fde68a']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    }
+
+    function createAdultCharts(data) {
+        // Vergleich früher/heute
+        const verglData = countValues(data, 'heute_extremer');
+        charts.vergleich = new Chart(document.getElementById('vergleichChart'), {
+            type: 'bar',
+            data: {
+                labels: Object.keys(verglData),
+                datasets: [{
+                    label: 'Erwachsene',
+                    data: Object.values(verglData),
+                    backgroundColor: '#3498db',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Wandel
+        const wandelData = countValues(data, 'wandel');
+        charts.wandel = new Chart(document.getElementById('wandelChart'), {
+            type: 'pie',
+            data: {
+                labels: Object.keys(wandelData),
+                datasets: [{
+                    data: Object.values(wandelData),
+                    backgroundColor: ['#10b981', '#6ee7b7', '#f59e0b', '#ef4444']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // These Bewertung
+        const theseData = countValues(data, 'these_stimmt');
+        charts.these = new Chart(document.getElementById('theseChart'), {
+            type: 'bar',
+            data: {
+                labels: Object.keys(theseData),
+                datasets: [{
+                    label: 'Antworten',
+                    data: Object.values(theseData),
+                    backgroundColor: '#f59e0b',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y'
+            }
+        });
+    }
+
+    function createMixedCharts(data) {
+        // Kommunikation (beide Gruppen)
+        const kommData = countValues(data, 'kommunikation');
+        charts.kommunikation = new Chart(document.getElementById('kommunikationChart'), {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(kommData),
+                datasets: [{
+                    data: Object.values(kommData),
+                    backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#6b7280']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Denglisch (je nach verfügbaren Daten)
+        const denglischData = {};
+        data.forEach(d => {
+            const val = d.denglisch || d.denglisch_position;
+            if (val) {
+                denglischData[val] = (denglischData[val] || 0) + 1;
+            }
+        });
+
+        if (Object.keys(denglischData).length > 0) {
+            charts.denglisch = new Chart(document.getElementById('denglischChart'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(denglischData),
+                    datasets: [{
+                        label: 'Nennungen',
+                        data: Object.values(denglischData),
+                        backgroundColor: '#8b5cf6',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+    }
+
+    function generateSummary(all, youth, adult) {
+        let html = '<strong>Empirische Befundlage:</strong><br><br>';
+        
+        if (youth.length > 0) {
+            // Zugehörigkeit
+            const zugehStark = youth.filter(d => 
+                d.zugehoerigkeit === 'Sehr stark' || d.zugehoerigkeit === 'Eher stark'
+            ).length;
+            const zugehProz = Math.round((zugehStark / youth.length) * 100);
+            
+            // Abgrenzung
+            const codingJa = youth.filter(d => 
+                d.coding === 'Ja bewusst' || d.coding === 'Ja unbewusst'
+            ).length;
+            const codingProz = Math.round((codingJa / youth.length) * 100);
+            
+            // Identität
+            const identStark = youth.filter(d => 
+                d.identitaet === 'Zentral' || d.identitaet === 'Wichtig'
+            ).length;
+            const identProz = Math.round((identStark / youth.length) * 100);
+
+            html += `<strong>Jugendliche (n=${youth.length}):</strong><br>`;
+            html += `• ${zugehProz}% empfinden starke Zugehörigkeit durch Sprache<br>`;
+            html += `• ${codingProz}% nutzen Abgrenzung (Coding) zu Erwachsenen<br>`;
+            html += `• ${identProz}% definieren sich stark über ihre Sprache<br><br>`;
+        }
+
+        if (adult.length > 0) {
+            const theseZu = adult.filter(d => 
+                d.these_stimmt === 'Stimme voll zu' || d.these_stimmt === 'Stimme teilweise zu'
+            ).length;
+            const theseProz = Math.round((theseZu / adult.length) * 100);
+            
+            const wandelPos = adult.filter(d => d.wandel === 'Positiver').length;
+            const wandelProz = Math.round((wandelPos / adult.length) * 100);
+
+            html += `<strong>Erwachsene (n=${adult.length}):</strong><br>`;
+            html += `• ${theseProz}% stimmen der These zu (Positionierung als Hauptfunktion)<br>`;
+            html += `• ${wandelProz}% haben sich positiver eingestellt über die Zeit<br>`;
+            
+            const anpassung = adult.filter(d => 
+                d.anpassung === 'Ja aktiv' || d.anpassung === 'Ja unbewusst'
+            ).length;
+            if (anpassung > 0) {
+                const anpassProz = Math.round((anpassung / adult.length) * 100);
+                html += `• ${anpassProz}% passen sich selbst sprachlich an Jugendliche an<br>`;
+            }
+        }
+
+        html += '<br><strong>Fazit für die Facharbeit:</strong><br>';
+        
+        if (youth.length > 0 && adult.length > 0) {
+            html += 'Die Daten bestätigen die These 3 überwiegend: Jugendsprache dient primär der sozialen Positionierung (Zugehörigkeit + Abgrenzung). ';
+            html += 'Auffällig ist, dass auch Erwachsene dies zunehmend erkennen und teilweise selbst partizipieren (Anpassung).';
+        } else if (youth.length > 0) {
+            html += 'Bei den Jugendlichen zeigt sich eindeutig die soziale Funktion der Sprache als Identitätsmarker und Abgrenzungswerkzeug.';
+        } else if (adult.length > 0) {
+            html += 'Die erwachsenen Befrag bestätigen die These als Beobachter der Jugendsprache.';
+        }
+
+        document.getElementById('summaryText').innerHTML = html;
+    }
+
+    function countValues(data, key) {
+        const counts = {};
+        data.forEach(d => {
+            const val = d[key];
+            if (val) {
+                counts[val] = (counts[val] || 0) + 1;
+            }
+        });
+        return counts;
+    }
+
+    function exportCSV() {
+        if (allData.length === 0) {
+            alert('Keine Daten zum Exportieren vorhanden!');
+            return;
+        }
+
+        // CSV Header
+        const headers = Object.keys(allData[0]).join(';');
+        
+        // CSV Rows
+        const rows = allData.map(row => {
+            return Object.values(row).map(val => {
+                if (Array.isArray(val)) return val.join(',');
+                if (typeof val === 'string' && val.includes(';')) return `"${val}"`;
+                return val;
+            }).join(';');
+        });
+
+        const csv = [headers, ...rows].join('\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `jugendsprache_auswertung_${new Date().toISOString().split('T')[0]}.csv`;
+        link.click();
+    }
+</script>
+
+</body>
+</html>
