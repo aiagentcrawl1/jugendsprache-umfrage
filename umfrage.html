@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jugendsprache 2026 – Wissenschaftliche Umfrage</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        /* LANDING PAGE */
+        .landing {
+            text-align: center;
+            padding: 80px 40px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        
+        .landing h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            color: #2d3748;
+            font-weight: 700;
+        }
+        
+        .landing p.subtitle {
+            font-size: 1.3em;
+            color: #4a5568;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .age-selector {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+        
+        .age-btn {
+            padding: 40px 60px;
+            font-size: 1.4em;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .age-btn.young {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .age-btn.adult {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            box-shadow: 0 10px 30px rgba(52, 152, 219, 0.4);
+        }
+        
+        .age-btn:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        
+        .age-btn:active {
+            transform: translateY(-2px);
+        }
+        
+        .age-btn .icon {
+            font-size: 2em;
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        .thesis-box {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 40px auto;
+            max-width: 600px;
+            border-left: 5px solid #667eea;
+            text-align: left;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        .thesis-box h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .thesis-box p {
+            color: #4a5568;
+            font-style: italic;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+        
+        /* FORMULAR STYLES */
+        .form-view {
+            display: none;
+        }
+        
+        .form-view.active {
+            display: block;
+        }
+        
+        .header {
+            padding: 50px 40px;
+            text-align: center;
+            color: white;
+        }
+        
+        .header h2 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Jugendlicher Style */
+        .youth-mode .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        /* Erwachsenen Style */
+        .adult-mode .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        }
+        
+        .form-container {
+            padding: 40px;
+        }
+        
+        .question-block {
+            margin-bottom: 35px;
+            padding: 30px;
+            background: #f8fafc;
+            border-radius: 16px;
+            border-left: 6px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .youth-mode .question-block {
+            border-left-color: #667eea;
+            background: linear-gradient(to right, #f8fafc 0%, #ffffff 100%);
+        }
+        
+        .adult-mode .question-block {
+            border-left-color: #3498db;
+            background: linear-gradient(to right, #f8fafc 0%, #ffffff 100%);
+        }
+        
+        .question-block:hover {
+            transform: translateX(5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+        
+        .question-header {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+        
+        .q-number {
+            background: #667eea;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1em;
+            flex-shrink: 0;
+        }
+        
+        .adult-mode .q-number {
+            background: #3498db;
+        }
+        
+        .q-text {
+            font-size: 1.15em;
+            font-weight: 600;
+            color: #1a202c;
+            line-height: 1.4;
+            padding-top: 5px;
+        }
+        
+        .q-context {
+            font-size: 0.95em;
+            color: #718096;
+            margin-top: 8px;
+            font-weight: 400;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-left: 51px;
+        }
+        
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .option-label:hover {
+            border-color: #cbd5e0;
+            background: #f7fafc;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .youth-mode .option-label:hover {
+            border-color: #667eea;
+        }
+        
+        .adult-mode .option-label:hover {
+            border-color: #3498db;
+        }
+        
+        .option-label input {
+            margin-right: 15px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+        
+        .adult-mode .option-label input {
+            accent-color: #3498db;
+        }
+        
+        .option-text {
+            font-size: 1.05em;
+            color: #2d3748;
+            font-weight: 500;
+        }
+        
+        select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1.05em;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: 51px;
+            width: calc(100% - 51px);
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .adult-mode select:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 20px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 14px;
+            font-size: 1.3em;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+        
+        .youth-mode .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .adult-mode .submit-btn {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            box-shadow: 0 10px 30px rgba(52, 152, 219, 0.3);
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+        
+        .success-view {
+            display: none;
+            text-align: center;
+            padding: 80px 40px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .success-view.active {
+            display: flex;
+        }
+        
+        .success-icon {
+            font-size: 6em;
+            margin-bottom: 30px;
+            animation: bounce 1s ease infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .success-view h2 {
+            font-size: 2.5em;
+            color: #2d3748;
+            margin-bottom: 20px;
+        }
+        
+        .success-view p {
+            font-size: 1.2em;
+            color: #4a5568;
+            max-width: 500px;
+            line-height: 1.6;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        @media (max-width: 640px) {
+            .landing {
+                padding: 40px 20px;
+            }
+            
+            .landing h1 {
+                font-size: 1.8em;
+            }
+            
+            .age-btn {
+                padding: 30px 40px;
+                font-size: 1.2em;
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .form-container {
+                padding: 25px;
+            }
+            
+            .question-block {
+                padding: 20px;
+            }
+            
+            .options, select {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .q-number {
+                width: 30px;
+                height: 30px;
+                font-size: 0.9em;
+            }
+            
+            .q-text {
+                font-size: 1em;
+            }
+        }
+        
+        .emphasis {
+            background: linear-gradient(120deg, #ffeaa7 0%, #ffeaa7 100%);
+            background-repeat: no-repeat;
+            background-size: 100% 40%;
+            background-position: 0 88%;
+            padding: 0 4px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="app">
+    <!-- LANDING PAGE -->
+    <div id="landingPage" class="landing">
+        <h1>Jugendsprache als soziale Positionierung</h1>
+        <p class="subtitle">Wissenschaftliche Umfrage zur Zugehörigkeit, Abgrenzung und Identitätsarbeit</p>
+        
+        <div class="thesis-box">
+            <h3>Forschungsleitende These</h3>
+            <p>"Die wichtigste Funktion von Jugendsprache ist <span class="emphasis">soziale Positionierung</span>: Zugehörigkeit, Abgrenzung und Identitätsarbeit."<br>
+            <small style="display: block; margin-top: 10px; color: #718096;">– Müller (2019); Neuland (Rezension)</small></p>
+        </div>
+        
+        <p style="margin: 30px 0; color: #4a5568; font-size: 1.1em;">Bitte wähle deine Altersgruppe:</p>
+        
+        <div class="age-selector">
+            <button class="age-btn young" onclick="startSurvey('youth')">
+                <span class="icon">🚀</span>
+                <div>Unter 25 Jahre</div>
+                <small style="font-size: 0.6em; opacity: 0.9; font-weight: 400;">(Jugendlicher Fragebogen)</small>
+            </button>
+            
+            <button class="age-btn adult" onclick="startSurvey('adult')">
+                <span class="icon">🎓</span>
+                <div>25 Jahre und älter</div>
+                <small style="font-size: 0.6em; opacity: 0.9; font-weight: 400;">(Erwachsenen Fragebogen)</small>
+            </button>
+        </div>
+    </div>
+
+    <!-- JUGENDLICHER FRAGEBOGEN -->
+    <div id="youthForm" class="form-view youth-mode">
+        <div class="header">
+            <h2>🚀 Deine Sprache, deine Gruppe</h2>
+            <p>Wie nutzt du Jugendsprache für Zugehörigkeit und Identität?</p>
+        </div>
+        
+        <div class="form-container">
+            <form id="formYouth" onsubmit="submitForm(event, 'youth')">
+                
+                <!-- Frage 1: Demografie -->
+                <div class="question-block">
+                    <div class="question-header">
+                        <div class="q-number">1</div>
+                        <div>
+                            <div class="q-text">Wie alt bist du?</div>
+                        </div>
+                    </div>
+                    <select name="alter" required>
+                        <option value="">Bitte auswählen...</option>
+                        <option value="12-14">12–14 Jahre</option>
+                        <option value="15-17">15–17 Jahre</option>
+                        <option value="18-20">18–20 Jahre</option>
+                        <option value="21-24">21–24 Jahre</option>
+                    </select>
+                </div>
+
+                <!-- Frage 2: Zugehörigkeit (These 3) -->
+                <div class="question-block">
+                    <div class="question-header">
+                        <div class="q-number">2</div>
+                        <div>
+                            <div class="q-text">Wenn du mit deinen Freunden sprichst, wie sehr schafft das ein "Wir-Gefühl"?</div>
+                            <div class="q-context">Gemeint: Fühlst du dich durch dieselbe Sprache stärker verbunden?</div>
+                        </div>
+                    </div>
+                    <div class="options">
+                        <label class="option-label">
+                            <input type="radio" name="zugehoerigkeit" value="Sehr stark" required>
+                            <span class="option-text">Sehr stark – wir sind eine Sprach-Community</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="zugehoerigkeit" value="Eher stark">
+                            <span class="option-text">Eher stark – man erkennt sich wieder</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="zugehoerigkeit" value="Eher schwach">
+                            <span class="option-text">Eher schwach – wichtiger sind andere Dinge</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="zugehoerigkeit" value="Gar nicht">
+                            <span class="option-text">Gar nicht – Sprache verbindet uns nicht</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Frage 3: Abgrenzung als bewusste Strategie -->
+                <div class="question-block">
+                    <div class="question-header">
+                        <div class="q-number">3</div>
+                        <div>
+                            <div class="q-text">Nutzt du manche Wörter bewusst, um zu zeigen: "Ich bin dabei" vs. "Du bist außen vor"?</div>
+                            <div class="q-context">Soziale Positionierung: In-Group vs. Out-Group</div>
+                        </div>
+                    </div>
+                    <div class="options">
+                        <label class="option-label">
+                            <input type="radio" name="abgrenzung_bewusst" value="Ja oft" required>
+                            <span class="option-text">Ja, oft – das zeigt, wer dazugehört</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="abgrenzung_bewusst" value="Manchmal">
+                            <span class="option-text">Manchmal – unbewusst</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="abgrenzung_bewusst" value="Selten">
+                            <span class="option-text">Selten – ich achte nicht darauf</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="abgrenzung_bewusst" value="Nie">
+                            <span class="option-text">Nie – ich will niemanden ausschließen</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Frage 4: Coding (Abgrenzung von Erwachsenen) -->
+                <div class="question-block">
+                    <div class="question-header">
+                        <div class="q-number">4</div>
+                        <div>
+                            <div class="q-text">Wenn Erwachsene (Eltern, Lehrer) dabei sind, verändert sich deine Sprache?</div>
+                            <div class="q-context">Müller spricht vom "Codieren" als Abgrenzungsstrategie</div>
+                        </div>
+                    </div>
+                    <div class="options">
+                        <label class="option-label">
+                            <input type="radio" name="coding" value="Ja bewusst" required>
+                            <span class="option-text">Ja, ich spreche bewusst anders/unverständlicher</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="coding" value="Ja unbewusst">
+                            <span class="option-text">Ja, aber automatisch – fällt mir gar nicht auf</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="coding" value="Weniger">
+                            <span class="option-text">Ich rede dann eher weniger</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="coding" value="Nein">
+                            <span class="option-text">Nein, ich bleibe mir treu</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Frage 5: Identitätsarbeit -->
+                <div class="question-block">
+                    <div class="question-header">
+                        <div class="q-number">5</div>
+                        <div>
+                            <div class="q-text">Wie sehr ist deine Art zu sprechen Teil deiner Persönlichkeit/Identität?</div>
+                            <div class="q-context">Identitätsarbeit: Sprache als Selbstentwurf</div>
+                        </div>
+                    </div>
+                    <div class="options">
+                        <label class="option-label">
+                            <input type="radio" name="identitaet" value="Zentral" required>
+                            <span class="option-text">Zentral – meine Sprache IST mein Style</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="identitaet" value="Wichtig">
+                            <span class="option-text">Wichtig – gehört zu mir dazu</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="identitaet" value="Untergeordnet">
+                            <span class="option-text">Untergeordnet – ich könnte auch anders</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="identitaet" value="Neutral">
+                            <span class="option-text">Neutral – ist nur Kommunikation</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Frage 6: Authentizität -->
+                <div class="question-block">
+                    <div class="question-header">
+                        <div class="q-number">6</div>
+                        <div>
+                            <div class="q-text">Gibt es Wörter, die du vermeidest, weil sie nicht "authentisch" zu deiner Gruppe passen?</div>
+                            <div class="q-context">Distinktion innerhalb der Jugendkultur</div>
+                        </div>
+                    </div>
+                    <div class="options">
+                        <label class="option-label">
+                            <input type="radio" name="authentizitaet" value="Ja zu mainsteam" required>
+                            <span class="option-text">Ja, manche sind zu "mainstream"</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="authentizitaet" value="Ja zu kindisch">
+                            <span class="option-text">Ja, manche sind zu kindisch/albern</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="authentizitaet" value="Nein">
+                            <span class="option-text">Nein, ich nutze alles, was mir gefällt</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="authentizitaet" value="Nein Aufmerksamkeit">
+                            <span class="option-text">Nein, aber ich achte darauf, nicht aufzufallen</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Frage 7: Medien und soziale Positionierung -->
+                <div class="question-block">
+                    <div class="question-header">
+                        <div class="q-number">7</div>
+                        <div>
+                            <div class="q-text">Woher kommen die Wörter, die deine Gruppe ausmachen?</div>
+                            <div class="q-context">Herkunft als soziales Kapital</div>
+                        </div>
+                    </div>
+                    <div class="options">
+                        <label class="option-label">
+                            <input type="checkbox" name="herkunft" value="TikTok">
+                            <span class="option-text">TikTok/Viral</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="checkbox" name="herkunft" value="Freunde">
+                            <span class="option-text">Meine enge Freundesgruppe (selbst erfunden)</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="checkbox" name="herkunft" value="Musik">
+                            <span class="option-text">Musik/Rap (bestimmte Subkultur)</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="checkbox" name="herkunft" value="Gaming">
+                            <span class="option-text">Gaming-Szene</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="checkbox" name="herkunft" value="Internationale">
+                            <span class="option-text">Internationale/Englische Influencer</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Frage 8: Reaktion auf Erwachsene -->
+                <div class="question-block">
+                    <div class="question-header">
+                        <div class="q-number">8</div>
+                        <div>
+                            <div class="q-text">Wie empfindest du es, wenn Erwachsene versuchen, eure Sprache zu nutzen?</div>
+                            <div class="q-context">Grenzüberschreitung oder Anerkennung?</div>
+                        </div>
+                    </div>
+                    <div class="options">
+                        <label class="option-label">
+                            <input type="radio" name="erwachsene_nutzen" value="Respekt" required>
+                            <span class="option-text">Respekt – sie wollen dazugehören</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="erwachsene_nutzen" value="Cringe">
+                            <span class="option-text">Cringe – das ist unsere Grenze</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="erwachsene_nutzen" value="Egal">
+                            <span class="option-text">Egal – Sprache gehört allen</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="erwachsene_nutzen" value="Gut">
+                            <span class="option-text">Gut – dann können sie uns verstehen</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Frage 9: Denglisch als Positionierungsmittel -->
+                <div class="question-block">
+                    <div class="question-header">
+                        <div class="q-number">9</div>
+                        <div>
+                            <div class="q-text">Nutzt du Englisches, um dich kosmopolitisch/cool zu positionieren?</div>
+                            <div class="q-context">Transnationale soziale Positionierung</div>
+                        </div>
+                    </div>
+                    <div class="options">
+                        <label class="option-label">
+                            <input type="radio" name="denglisch_position" value="Ja stark" required>
+                            <span class="option-text">Ja, das macht mich globaler/cooler</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="denglisch_position" value="Eher ja">
+                            <span class="option-text">Eher ja – es gehört dazu</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="denglisch_position" value="Praktisch">
+                            <span class="option-text">Nein, es ist einfach praktisch/kürzer</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="denglisch_position" value="Deutsch">
+                            <span class="option-text">Ich bevorzuge bewusst deutsche Wörter</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Frage 10: Zukunft der Positionierung -->
+                <div class="question-block">
+                    <div class="question-header">
+                        <div class="q-number">10</div>
+                        <div>
+                            <div class="q-text">Wird Jugendsprache in Zukunft noch wichtiger für soziale Gruppenbildung?</div>
+                        </div>
+                    </div>
+                    <div class="options">
+                        <label class="option-label">
+                            <input type="radio" name="zukunft" value="Ja wichtiger" required>
+                            <span class="option-text">Ja, durch Social Media noch stärker</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="zukunft" value="Bleibt gleich">
+                            <span class="option-text">Bleibt gleich – war schon immer so</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="zukunft" value="Weniger wichtig">
+                            <span class="option-text">Weniger wichtig – wird mainstream</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="zukunft" value="Durch KI">
+                            <span class="option-text">KI verändert alles (andere Frage)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">Umfrage absenden</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ERWACHSENEN FRAGEBOGEN -->
+    <div id="adultForm" class="form-view adult-mode">
+        <div class="header">
+            <h2>🎓 Generationen im Vergleich</h2>
+            <p>Wie hat sich die Funktion von Jugendsprache verändert?</p>
+        </div>
+        
+        <div class="form-container">
+            <form id="formAdult" onsubmit="submitForm(event, 'adult')">
+                
+                <!-- Frage 1 -->
+                <div class="question-block">
+                    <div class="question-header">
+                        <div class="q-number">1</div>
+                        <div>
+                            <div class="q-text">Wie alt sind Sie?</div>
+                        </div>
+                    </div>
+                    <select name="alter" required>
+                        <option value="">Bitte auswählen...</option>
+                        <option value="25-35">25–35 Jahre</option>
+                        <option value="36-50">36–50 Jahre</option>
+                        <option value="51-65">51–65 Jahre</option>
+                        <option value="65+">Über 65 Jahre</option>
+                    </select>
+                </div>
+
+                <!-- Frage 2: Rückblick eigene Jugend (Vergleich) -->
+                <div class="question-block">
+                    <div class="question-header">
+                        <div class="q-number">2</div>
+                        <div>
+                            <div class="q-text">Als Sie jung waren (15-20): Hatten Sie auch eine eigene Sprache/Codes?</div>
+                            <div class="q-context">Vergleich Generation: Gab es damals schon soziale Positionierung durch Sprache?</div>
+                        </div>
+                    </div>
+                    <div class="options">
+                        <label class="option-label">
+                            <input type="radio" name="eigene_jugend" value="Ja stark" required>
+                            <span class="option-text">Ja, sehr ausgeprägt – wir hatten unsere Geheimsprache</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="eigene_jugend" value="Ja etwas">
+                            <span class="option-text">Ja, aber weniger systematisch als heute</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="eigene_jugend" value="Kaum">
+                            <span class="option-text">Kaum – wir sprachen alle ähnlich</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="eigene_jugend" value="Nein">
+                            <span class="option-text">Nein, das gab es bei uns nicht</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Frage 3: Abgrenzung früher -->
+                <div class="question-block">
+                    <div class="question-header">
+                        <div class="q-number">3</div>
+                        <div>
+                            <div class="q-text">Wenn ja: Wogegen grenzten Sie sich damals sprachlich ab?</div>
+                        </div>
+                    </div>
+                    <div class="options">
+                        <label class="option-label">
+                            <input type="radio" name="abgrenzung_frueher" value="Eltern" required>
+                            <span class="option-text">Gegen die Eltern-Generation (wie heute)</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="abgrenzung_frueher" value="Subkultur">
+                            <span class="option-text">Gegen andere Jugendliche (Subkulturen)</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="abgrenzung_frueher" value="Beides">
+                            <span class="option-text">Beides</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="abgrenzung_frueher" value="Nicht zutreffend">
+                            <span class="option-text">Nicht zutreffend / Weiß nicht mehr</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Frage 4: Wahrnehmung heute -->
+                <div class="question-block">
+                    <div class="question-header">
+                        <div class="q-number">4</div>
+                        <div>
+                            <div class="q-text">Wie empfinden Sie die heutige Jugendsprache hinsichtlich Abgrenzung?</div>
+                            <div class="q-context">Ist sie extremer/sozial markierender als früher?</div>
+                        </div>
+                    </div>
+                    <div class="options">
+                        <label class="option-label">
+                            <input type="radio" name="heute_extremer" value="Viel extremer" required>
+                            <span class="option-text">Viel extremer – heute ist es fast eine Geheimsprache</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="heute_extremer" value="Etwas extremer">
+                            <span class="option-text">Etwas extremer – mehr Denglisch, mehr Codes</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="heute_extremer" value="Gleich">
+                            <span class="option-text">Gleich – nur die Wörter sind andere</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="heute_extremer" value="Weniger">
+                            <span class="option-text">Weniger extrem – durch Medien ist alles transparenter</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Frage 5: Einstellungswandel -->
+                <div class="question-block">
+                    <div class="question-header">
+                        <div class="q-number">5</div>
+                        <div>
+                            <div class="q-text">Wie hat sich Ihre Einstellung zur Jugendsprache über die Jahre verändert?</div>
+                            <div class="q-context">Akzeptanz der sozialen Funktion</div>
+                        </div>
+                    </div>
+                    <div class="options">
+                        <label class="option-label">
+                            <input type="radio" name="wandel" value="Positiver" required>
+                            <span class="option-text">Positiver – ich verstehe jetzt die Funktion (Abgrenzung/Zugehörigkeit)</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="wandel" value="Gleich">
+                            <span class="option-text">Gleich – war mir schon immer egal</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="wandel" value="Negativer">
+                            <span class="option-text">Negativer – früher war das noch "süß", heute ist es zu viel</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="wandel" value="Wechselnd">
+                            <span class="option-text">Wechselnd – kommt auf die Situation an</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Frage 6: Eigene Anpassung -->
+                <div class="question-block">
+                    <div class="question-header">
+                        <div class="q-number">6</div>
+                        <div>
+                            <div class="q-text">Passen Sie sich sprachlich an Jugendliche an, um Akzeptanz/Zugehörigkeit zu signalisieren?</div>
+                            <div class="q-context">Soziale Positionierung umgekehrt: Die Erwachsenen passen sich an</div>
+                        </div>
+                    </div>
+                    <div class="options">
+                        <label class="option-label">
+                            <input type="radio" name="anpassung" value="Ja aktiv" required>
+                            <span class="option-text">Ja, aktiv – ich will die Brücke bauen</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="anpassung" value="Ja unbewusst">
+                            <span class="option-text">Ja, unbewusst – ich übernehme manche Wörter</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="anpassung" value="Nein aber verstehe">
+                            <span class="option-text">Nein, aber ich verstehe mehr als ich zeige</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="anpassung" value="Nein ablehnend">
+                            <span class="option-text">Nein, ich bestehe auf "korrektes" Deutsch</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Frage 7: Medienbegegnung -->
+                <div class="question-block">
+                    <div class="question-header">
+                        <div class="q-number">7</div>
+                        <div>
+                            <div class="q-text">Wo begegnen Sie heute Jugendsprache?</div>
+                        </div>
+                    </div>
+                    <div class="options">
+                        <label class="option-label">
+                            <input type="checkbox" name="begegnung" value="Familie">
+                            <span class="option-text">In der Familie (Kinder/Enkel)</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="checkbox" name="begegnung" value="Beruf">
+                            <span class="option-text">Im Beruf (Azubis, jüngere Kollegen)</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="checkbox" name="begegnung" value="Medien">
+                            <span class="option-text">In Medien (Werbung, TV, Zeitungen)</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="checkbox" name="begegnung" value="Oeffentlich">
+                            <span class="option-text">Im öffentlichen Raum (Bus, Café)</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="checkbox" name="begegnung" value="Nirgends">
+                            <span class="option-text">Fast nie</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Frage 8: Kommunikationswirkung -->
+                <div class="question-block">
+                    <div class="question-header">
+                        <div class="q-number">8</div>
+                        <div>
+                            <div class="q-text">Fördert oder behindert Jugendsprache Ihrer Meinung nach die Kommunikation zwischen Generationen?</div>
+                        </div>
+                    </div>
+                    <div class="options">
+                        <label class="option-label">
+                            <input type="radio" name="kommunikation" value="Fördert" required>
+                            <span class="option-text">Fördert – wer die Codes kennt, gehört dazu</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="kommunikation" value="Beides">
+                            <span class="option-text">Beides – verbindet die Gruppe, schließt andere aus</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="kommunikation" value="Behindert">
+                            <span class="option-text">Behindert – es entstehen Verständnisschranken</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="kommunikation" value="Neutral">
+                            <span class="option-text">Neutral – jede Generation hat das Recht auf ihre Sprache</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Frage 9: Denglisch -->
+                <div class="question-block">
+                    <div class="question-header">
+                        <div class="q-number">9</div>
+                        <div>
+                            <div class="q-text">Wie bewerten Sie den Denglisch-Anteil in der heutigen Jugendsprache?</div>
+                            <div class="q-context">Transnationale Positionierung vs. Tradition</div>
+                        </div>
+                    </div>
+                    <div class="options">
+                        <label class="option-label">
+                            <input type="radio" name="denglisch" value="Positiv" required>
+                            <span class="option-text">Positiv – macht die Jugend weltläufiger</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="denglisch" value="Notwendig">
+                            <span class="option-text">Notwendiges Übel – so ist die Welt halt</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="denglisch" value="Negativ">
+                            <span class="option-text">Negativ – zerstört die deutsche Sprachidentität</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="denglisch" value="Gleichgültig">
+                            <span class="option-text">Gleichgültig – jede Generation macht das anders</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Frage 10: These 3 Bewertung -->
+                <div class="question-block">
+                    <div class="question-header">
+                        <div class="q-number">10</div>
+                        <div>
+                            <div class="q-text">Stimmen Sie zu: Die Hauptfunktion von Jugendsprache ist heute die soziale Positionierung (Zugehörigkeit zeigen, sich abgrenzen)?</div>
+                            <div class="q-context">Direkte Abfrage der These</div>
+                        </div>
+                    </div>
+                    <div class="options">
+                        <label class="option-label">
+                            <input type="radio" name="these_stimmt" value="Stimme voll zu" required>
+                            <span class="option-text">Stimme voll zu – das ist der Hauptgrund</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="these_stimmt" value="Stimme teilweise zu">
+                            <span class="option-text">Stimme teilweise zu – neben anderen Funktionen</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="these_stimmt" value="Neutral">
+                            <span class="option-text">Neutral – kann ich nicht beurteilen</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="these_stimmt" value="Stimme nicht zu">
+                            <span class="option-text">Stimme nicht zu – es geht um Spaß/Kreativität, nicht um Positionierung</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Frage 11: Zukunft -->
+                <div class="question-block">
+                    <div class="question-header">
+                        <div class="q-number">11</div>
+                        <div>
+                            <div class="q-text">Wird Jugendsprache in Zukunft noch wichtiger für die Gruppenidentität?</div>
+                        </div>
+                    </div>
+                    <div class="options">
+                        <label class="option-label">
+                            <input type="radio" name="zukunft" value="Ja wichtiger" required>
+                            <span class="option-text">Ja, durch digitale Räume noch stärker</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="zukunft" value="Bleibt gleich">
+                            <span class="option-text">Bleibt konstant – das ist ein Konstante der Jugend</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="zukunft" value="Weniger wichtig">
+                            <span class="option-text">Weniger wichtig – wird durch Emoji/Sprachnachrichten ersetzt</span>
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="zukunft" value="Universal">
+                            <span class="option-text">Wird universell – alle sprechen dann so</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">Umfrage absenden</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- SUCCESS VIEW -->
+    <div id="successView" class="success-view">
+        <div class="success-icon">✅</div>
+        <h2>Vielen Dank für Ihre Teilnahme!</h2>
+        <p>Ihre Antworten wurden erfolgreich gespeichert und tragen zur wissenschaftlichen Untersuchung zur sozialen Funktion von Jugendsprache bei.</p>
+        <p style="margin-top: 20px; font-size: 0.9em; color: #718096;">Sie können das Fenster nun schließen.</p>
+    </div>
+</div>
+
+<script>
+    function startSurvey(type) {
+        // Hide landing
+        document.getElementById('landingPage').style.display = 'none';
+        
+        // Show appropriate form
+        if (type === 'youth') {
+            document.getElementById('youthForm').classList.add('active');
+        } else {
+            document.getElementById('adultForm').classList.add('active');
+        }
+    }
+
+    function submitForm(event, type) {
+        event.preventDefault();
+        
+        const form = event.target;
+        const formData = new FormData(form);
+        const data = {
+            timestamp: new Date().toISOString(),
+            type: type,
+            userAgent: navigator.userAgent
+        };
+        
+        // Process all form fields
+        for (let [key, value] of formData.entries()) {
+            if (data[key]) {
+                // Handle multiple values (checkboxes)
+                if (!Array.isArray(data[key])) {
+                    data[key] = [data[key]];
+                }
+                data[key].push(value);
+            } else {
+                data[key] = value;
+            }
+        }
+        
+        // Save to localStorage
+        let responses = JSON.parse(localStorage.getItem('jugendspracheThese3') || '[]');
+        responses.push(data);
+        localStorage.setItem('jugendspracheThese3', JSON.stringify(responses));
+        
+        // Hide form and show success
+        document.getElementById('youthForm').classList.remove('active');
+        document.getElementById('adultForm').classList.remove('active');
+        document.getElementById('successView').classList.add('active');
+        
+        console.log('Gespeichert:', data);
+    }
+    
+    // Prevent accidental page reload
+    window.addEventListener('beforeunload', function(e) {
+        if (document.querySelector('.form-view.active')) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
+</script>
+
+</body>
+</html>
