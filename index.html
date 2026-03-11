@@ -26,51 +26,26 @@
             padding: 80px 40px;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
-        .landing h1 {
-            font-size: 2.5em;
-            margin-bottom: 15px;
-            color: #2d3748;
-        }
+        .landing h1 { font-size: 2.5em; margin-bottom: 15px; color: #2d3748; }
         .age-selector {
-            display: flex;
-            gap: 30px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 40px;
+            display: flex; gap: 30px; justify-content: center;
+            flex-wrap: wrap; margin-top: 40px;
         }
         .age-btn {
-            padding: 30px 50px;
-            font-size: 1.3em;
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
+            padding: 30px 50px; font-size: 1.3em; border: none;
+            border-radius: 15px; cursor: pointer; font-weight: bold; transition: all 0.3s;
         }
-        .age-btn.young {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        .age-btn.adult {
-            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
-            color: white;
-        }
+        .age-btn.young { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .age-btn.adult { background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%); color: white; }
         .form-view { display: none; }
         .form-view.active { display: block; }
-        .header {
-            padding: 40px;
-            text-align: center;
-            color: white;
-        }
+        .header { padding: 40px; text-align: center; color: white; }
         .youth-mode .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         .adult-mode .header { background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%); }
         .form-container { padding: 40px; }
         .question-block {
-            margin-bottom: 25px;
-            padding: 20px;
-            background: #f8fafc;
-            border-radius: 12px;
-            border-left: 4px solid #667eea;
+            margin-bottom: 25px; padding: 20px; background: #f8fafc;
+            border-radius: 12px; border-left: 4px solid #667eea;
         }
         .adult-mode .question-block { border-left-color: #3498db; }
         .q-text { font-weight: 600; margin-bottom: 10px; color: #1a202c; }
@@ -82,12 +57,29 @@
         .option-label:hover { border-color: #667eea; }
         .option-label input { margin-right: 10px; }
         select { width: 100%; padding: 10px; border: 2px solid #e2e8f0; border-radius: 8px; }
+
+        /* Submit Button + Spinner */
         .submit-btn {
-            width: 100%; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white; border: none; border-radius: 10px; font-size: 1.1em; font-weight: bold;
-            cursor: pointer; margin-top: 20px;
+            width: 100%; padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none; border-radius: 10px; font-size: 1.1em;
+            font-weight: bold; cursor: pointer; margin-top: 20px;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: opacity 0.2s;
         }
+        .submit-btn:disabled { opacity: 0.7; cursor: not-allowed; }
         .adult-mode .submit-btn { background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%); }
+        .spinner {
+            display: none;
+            width: 20px; height: 20px;
+            border: 3px solid rgba(255,255,255,0.4);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            flex-shrink: 0;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
         .success { text-align: center; padding: 60px; display: none; }
         .success.active { display: block; }
         .hidden { display: none !important; }
@@ -202,7 +194,10 @@
                         <label class="option-label"><input type="radio" name="zukunft" value="Weniger wichtig"> Weniger wichtig – wird mainstream</label>
                     </div>
                 </div>
-                <button type="submit" class="submit-btn">Absenden</button>
+                <button type="submit" class="submit-btn" id="submitYouth">
+                    <div class="spinner" id="spinnerYouth"></div>
+                    <span id="btnTextYouth">Absenden</span>
+                </button>
             </form>
         </div>
     </div>
@@ -309,7 +304,10 @@
                         <label class="option-label"><input type="radio" name="zukunft" value="Weniger wichtig"> Weniger wichtig – wird durch Emoji/Sprachnachrichten ersetzt</label>
                     </div>
                 </div>
-                <button type="submit" class="submit-btn">Absenden</button>
+                <button type="submit" class="submit-btn" id="submitAdult">
+                    <div class="spinner" id="spinnerAdult"></div>
+                    <span id="btnTextAdult">Absenden</span>
+                </button>
             </form>
         </div>
     </div>
@@ -335,11 +333,19 @@
 
     async function submitToSheets(event, type) {
         event.preventDefault();
-        
+
         const form = event.target;
         const formData = new FormData(form);
         const data = { type: type };
-        
+
+        // Spinner starten
+        const btn = document.getElementById(type === 'youth' ? 'submitYouth' : 'submitAdult');
+        const spinner = document.getElementById(type === 'youth' ? 'spinnerYouth' : 'spinnerAdult');
+        const btnText = document.getElementById(type === 'youth' ? 'btnTextYouth' : 'btnTextAdult');
+        btn.disabled = true;
+        spinner.style.display = 'block';
+        btnText.textContent = 'Wird gesendet...';
+
         for (let [key, value] of formData.entries()) {
             if (data[key]) {
                 if (!Array.isArray(data[key])) {
@@ -358,19 +364,18 @@
                 headers: { 'Content-Type': 'application/json' },
                 mode: 'no-cors'
             });
-            
+
             form.style.display = 'none';
             document.getElementById('successView').classList.add('active');
-            
+
         } catch (error) {
             console.error('Error:', error);
             alert('Fehler beim Speichern. Bitte nochmal versuchen.');
+            btn.disabled = false;
+            spinner.style.display = 'none';
+            btnText.textContent = 'Absenden';
         }
     }
 </script>
 </body>
 </html>
-
-
-
-
