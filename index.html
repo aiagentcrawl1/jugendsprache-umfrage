@@ -333,16 +333,8 @@
         }
     }
 
-  async function submitToSheets(event, type) {
+    async function submitToSheets(event, type) {
         event.preventDefault();
-        
-        const submitBtn = event.target.querySelector('.submit-btn');
-        const originalText = submitBtn.textContent;
-        
-        // Verhindere mehrfaches Absenden
-        if (submitBtn.disabled) return;
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Wird gesendet...';
         
         const form = event.target;
         const formData = new FormData(form);
@@ -373,8 +365,6 @@
         } catch (error) {
             console.error('Error:', error);
             alert('Fehler beim Speichern. Bitte nochmal versuchen.');
-            submitBtn.disabled = false;
-            submitBtn.textContent = originalText;
         }
     }
 </script>
